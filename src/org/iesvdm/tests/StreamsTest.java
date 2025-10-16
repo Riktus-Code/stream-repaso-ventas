@@ -210,6 +210,14 @@ class StreamsTest {
 			cliHome.beginTransaction();
 	
 			List<Cliente> list = cliHome.findAll();
+            var listaNull = list.stream()
+                    .filter(cliente -> cliente.getApellido2() != null)
+                            .sorted(comparing((Cliente c)->c.getApellido1())
+                                    .thenComparing((Cliente c)->c.getNombre()))
+                    .map(cliente -> cliente.getId()+" "+cliente.getNombre()+" "+cliente.getApellido1())
+                                    .toList();
+
+            listaNull.forEach(System.out::println);
 			
 			//TODO STREAMS
 			
