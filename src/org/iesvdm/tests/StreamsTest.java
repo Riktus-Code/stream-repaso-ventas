@@ -113,8 +113,16 @@ class StreamsTest {
 			//PISTA: Generación por sdf de fechas
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			Date ultimoDia2016 = sdf.parse("2016-12-31");
-			
+            Date ultimoDia2017 = sdf.parse("2018-01-01");
 			List<Pedido> list = pedHome.findAll();
+           var listaNueva = list.stream()
+                   .filter(p->p.getFecha().after(ultimoDia2016) && p.getFecha().before(ultimoDia2017))
+                           .filter(p->p.getTotal()>500)
+                                           .toList();
+
+           listaNueva.forEach(p-> System.out.println(p));
+
+
 				
 			//TODO STREAMS	
 						
@@ -141,6 +149,12 @@ class StreamsTest {
 			cliHome.beginTransaction();
 	
 			List<Cliente> list = cliHome.findAll();
+            var listaCliente = list.stream()
+                    .filter(c->c.getPedidos().isEmpty())
+                            .map(cliente->"ID Cliente: "+cliente.getId())
+                                    .toList();
+
+            listaCliente.forEach(System.out::println);
 			
 			//TODO STREAMS		
 		
@@ -165,7 +179,12 @@ class StreamsTest {
 			comHome.beginTransaction();
 		
 			List<Comercial> list = comHome.findAll();		
-			
+			Optional<Comercial> optionalComercial = list.stream()
+                            .max(comparing(comercial -> comercial.getComisión(),reverseOrder()));
+
+            optionalComercial.ifPresentOrElse(comercial -> System.out.println(comercial.getNombre()+" "+comercial.getComisión())
+                                                                ,()-> System.out.println("No existe comisión"));
+
 			//TODO STREAMS		
 				
 			comHome.commitTransaction();
